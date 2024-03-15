@@ -1,13 +1,24 @@
 import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getContacts } from '../../redux/selectors';
+import { addContact } from '../../redux/contactSlice';
 import { Form, Input, Button, Wrapper } from './ContactForm.styled';
 
-export const ContactForm = ({ onAddContact }) => {
+export const ContactForm = () => {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
+  const contacts = useSelector(getContacts);
+  const dispatch = useDispatch();
 
   const handleSubmit = event => {
     event.preventDefault();
-    onAddContact(name, number);
+    const normalizedName = name.toLowerCase();
+    if (
+      contacts.some(contact => contact.name.toLowerCase() === normalizedName)
+    ) {
+      alert(`${name} is already in your phonebook.`);
+    }
+    dispatch(addContact({ name, number }));
     setName('');
     setNumber('');
   };
